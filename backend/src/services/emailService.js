@@ -1,44 +1,50 @@
-const nodemailer = require('nodemailer');
-
-let transporter = null;
-
-function getTransporter() {
-  if (transporter) return transporter;
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn('[email] SMTP credentials not set, emails will be logged only');
-    return null;
-  }
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-  return transporter;
-}
+const https = require('https');
 
 async function sendEmail({ to, subject, html }) {
-  const t = getTransporter();
-  if (!t) {
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
     console.log(`[email:skipped] To: ${to} | Subject: ${subject}`);
     return { skipped: true };
   }
-  try {
-    const info = await t.sendMail({
-      from: process.env.EMAIL_FROM || 'FlatMatch <no-reply@flatmatch.app>',
-      to,
-      subject,
-      html,
+
+  const payload = JSON.stringify({
+    sender: { email: process.env.SMTP_USER, name: 'FlatMatch' },
+    to: [{ email: to }],
+    subject,
+    htmlContent: html,
+  });
+
+  return new Promise((resolve) => {
+    const req = https.request(
+      {
+        hostname: 'api.brevo.com',
+        path: '/v3/smtp/email',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': apiKey,
+        },
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve({ success: true });
+          } else {
+            console.error(`[email:error] Brevo API ${res.statusCode}: ${data}`);
+            resolve({ error: data });
+          }
+        });
+      }
+    );
+    req.on('error', (err) => {
+      console.error(`[email:error] ${err.message}`);
+      resolve({ error: err.message });
     });
-    return info;
-  } catch (err) {
-    // Email failures must never break the request flow that triggered them
-    console.error(`[email:error] ${err.message}`);
-    return { error: err.message };
-  }
+    req.write(payload);
+    req.end();
+  });
 }
 
 const templates = {
@@ -47,7 +53,7 @@ const templates = {
     html: `<p>Hi ${name},</p>
       <p>Your FlatMatch verification code is:</p>
       <p style="font-size:28px;font-weight:700;letter-spacing:4px;margin:16px 0;">${otp}</p>
-      <p>This code expires in ${process.env.OTP_EXPIRY_MINUTES || 10} minutes. If you didn't request this, you can ignore this email.</p>`,
+      <p>This code expires in ${process.env.OTP_EXPIRY_MINUTES || 10} minutes.</p>`,
   }),
   interestReceived: (ownerName, tenantName, listingTitle, score) => ({
     subject: `New interest in "${listingTitle}"`,
@@ -60,7 +66,7 @@ const templates = {
   highMatchInterest: (ownerName, tenantName, listingTitle, score) => ({
     subject: `🔥 High-match tenant (${score}%) interested in "${listingTitle}"`,
     html: `<p>Hi ${ownerName},</p>
-      <p><strong>${tenantName}</strong> is a <strong>${score}% compatibility match</strong> for your listing <strong>${listingTitle}</strong> — this is one of your strongest leads yet.</p>
+      <p><strong>${tenantName}</strong> is a <strong>${score}% compatibility match</strong> for your listing <strong>${listingTitle}</strong>.</p>
       <p>Respond quickly to keep the conversation going.</p>`,
   }),
   interestAccepted: (tenantName, ownerName, listingTitle) => ({
@@ -71,7 +77,7 @@ const templates = {
   interestDeclined: (tenantName, ownerName, listingTitle) => ({
     subject: `Update on your interest in "${listingTitle}"`,
     html: `<p>Hi ${tenantName},</p>
-      <p><strong>${ownerName}</strong> has declined your interest in <strong>${listingTitle}</strong>. Don't worry — keep browsing, there are more matches waiting for you on FlatMatch.</p>`,
+      <p><strong>${ownerName}</strong> has declined your interest in <strong>${listingTitle}</strong>. Keep browsing!</p>`,
   }),
 };
 
