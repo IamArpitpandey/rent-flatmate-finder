@@ -5,6 +5,7 @@ import {
   Sparkles, Star, Quote, TrendingUp, Zap, Heart
 } from 'lucide-react';
 import CompatibilityRing from '../components/ui/CompatibilityRing';
+import RoomIllustration from '../components/ui/RoomIllustration';
 
 export default function Landing() {
   const [demoScore, setDemoScore] = useState(0);
@@ -111,12 +112,9 @@ export default function Landing() {
               <span className="text-xs font-mono uppercase tracking-wide text-slate">Your match</span>
               <CompatibilityRing score={demoScore} size={64} strokeWidth={5} />
             </div>
-            <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-jade-light to-brass-light mb-4 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/30 to-white/0" />
-              {/* mock room icon */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <MapPin size={48} className="text-ink/8" strokeWidth={1} />
-              </div>
+            <div className="aspect-[4/3] rounded-xl mb-4 relative overflow-hidden">
+              <RoomIllustration className="w-full h-full" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0" />
             </div>
             <h3 className="font-display text-lg text-ink">1BHK near Sector 7, Rohini</h3>
             <p className="text-sm text-slate flex items-center gap-1 mt-1">
