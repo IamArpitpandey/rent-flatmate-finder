@@ -11,14 +11,14 @@ notifications keep everyone in the loop.
 
 ## 1. Tech stack
 
-| Layer        | Choice                                                                 |
-|--------------|------------------------------------------------------------------------|
+| Layer        | Choice                                                                |
+|--------------|---------------------------------------------------------------------- |
 | Frontend     | React 18 + Vite, Tailwind CSS, React Router, Socket.io-client         |
 | Backend      | Node.js + Express, Socket.io (WebSocket chat)                         |
-| Database     | MongoDB + Mongoose                                                     |
-| AI           | Groq LLM (`llama-3.3-70b-versatile`) via REST API                    |
-| Auth         | JWT in an httpOnly cookie, role-based (`tenant` / `owner` / `admin`) |
-| Email        | Nodemailer + Brevo SMTP (free tier, 300 emails/day)                   |
+| Database     | MongoDB + Mongoose                                                    |
+| AI           | Groq LLM (`llama-3.3-70b-versatile`) via REST API                     |
+| Auth         | JWT in an httpOnly cookie, role-based (`tenant` / `owner` / `admin`)  |
+| Email        | Nodemailer                                                            |
 | File storage | Cloudinary (free tier) for listing photos                             |
 
 ---
@@ -61,7 +61,6 @@ rent-flatmate-finder/
 - Node.js 18+
 - MongoDB connection string — free [MongoDB Atlas](https://cloud.mongodb.com) M0 cluster
 - Groq API key — free at [console.groq.com](https://console.groq.com) → API Keys → Create
-- Brevo SMTP credentials — free at [app.brevo.com](https://app.brevo.com) → Transactional → SMTP & API (optional — app degrades gracefully without it)
 - Cloudinary account — free at [cloudinary.com](https://cloudinary.com/users/register/free) (optional — listings work without photos)
 
 ### Backend
@@ -240,8 +239,6 @@ auditable. No request ever fails because the LLM is unavailable — see `SYSTEM_
 
 - **Groq LLM** (`llama-3.3-70b-versatile`) chosen for reliability, speed, and a
   generous free tier over Gemini — same JSON prompt structure, drop-in replacement.
-- **Brevo SMTP** used for transactional email (interest notifications) — professional
-  sender identity, 300 emails/day free, no Gmail App Password jugaad needed.
 - **Compatibility cache invalidation** on profile update — `PUT /auth/me` deletes
   all `CompatibilityScore` docs for that tenant so fresh scores are computed on the
   next browse, without requiring a manual DB flush.
