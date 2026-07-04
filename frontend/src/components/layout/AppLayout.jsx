@@ -27,7 +27,7 @@ export default function AppLayout({ children }) {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-sm font-medium text-paper">© 2026 FlatMatch</p>
-              <p className="text-[11px] text-slate-light">Compatibility scoring powered by Gemini</p>
+              <p className="text-[11px] text-slate-light">Compatibility scoring powered by Groq AI</p>
             </div>
           </div>
           <span className="font-mono text-[11px] text-slate-light/60">v1.0.0</span>
