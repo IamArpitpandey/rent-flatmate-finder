@@ -13,7 +13,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { register, login, logout, getMe, updateMe, verifyOtp, resendOtp } = require('../controllers/authController');
+const { register, login, logout, getMe, updateMe,} = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const User = require('../models/User');
@@ -29,8 +29,6 @@ function backendBaseUrl(req) {
 }
 
 router.post('/register', register);
-router.post('/verify-otp', verifyOtp);
-router.post('/resend-otp', resendOtp);
 router.post('/login', login);
 router.post('/logout', logout);
 router.get('/me', protect, getMe);
