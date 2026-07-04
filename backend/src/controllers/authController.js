@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
-const CompatibilityScore = require('../models/CompatibilityScore');
 
 // @desc  Register a new user (tenant or owner)
 // @route POST /api/auth/register
@@ -26,7 +25,6 @@ const register = asyncHandler(async (req, res) => {
     phone,
     gender: gender || '',
     role: ['tenant', 'owner'].includes(role) ? role : 'tenant',
-    isVerified: true,
   });
 
   generateToken(res, user._id);
@@ -55,7 +53,7 @@ const login = asyncHandler(async (req, res) => {
   res.json({ success: true, user: user.toSafeObject() });
 });
 
-// @desc  Logout
+// @desc  Logout - clears cookie
 // @route POST /api/auth/logout
 const logout = asyncHandler(async (req, res) => {
   res.cookie('token', '', { httpOnly: true, expires: new Date(0) });
@@ -86,11 +84,6 @@ const updateMe = asyncHandler(async (req, res) => {
   }
 
   await req.user.save();
-
-  if (preferences && req.user.role === 'tenant') {
-    await CompatibilityScore.deleteMany({ tenant: req.user._id });
-  }
-
   res.json({ success: true, user: req.user.toSafeObject() });
 });
 

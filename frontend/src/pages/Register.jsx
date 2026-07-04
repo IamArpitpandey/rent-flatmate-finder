@@ -21,9 +21,9 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await register(form);
-      toast.success('Verification code sent to your email');
-      navigate('/verify-otp', { state: { email: data.email || form.email } });
+      const user = await register(form);
+      toast.success('Account created — welcome to FlatMatch!');
+      navigate(user.role === 'tenant' ? '/browse' : '/owner');
     } catch (err) {
       toast.error(err.message);
     } finally {

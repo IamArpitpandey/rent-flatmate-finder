@@ -7,7 +7,6 @@ import Loader from './components/ui/Loader';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import VerifyOtp from './pages/VerifyOtp';
 import Browse from './pages/Browse';
 import ListingDetail from './pages/ListingDetail';
 import OwnerDashboard from './pages/OwnerDashboard';
@@ -28,7 +27,6 @@ export default function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/verify-otp" element={<VerifyOtp />} />
 
       <Route
         path="/browse"
