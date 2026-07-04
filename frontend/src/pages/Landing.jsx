@@ -24,13 +24,13 @@ export default function Landing() {
 
       {/* ============ NAV ============ */}
       <header className="fm-land-nav">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-14 sm:h-20 flex items-center justify-between gap-2">
           {/* Brand */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-jade to-jade-dark flex items-center justify-center shadow-glowJade">
-              <span className="text-paper font-display font-bold text-sm">F</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-gradient-to-br from-jade to-jade-dark flex items-center justify-center shadow-glowJade">
+              <span className="text-paper font-display font-bold text-xs sm:text-sm">F</span>
             </div>
-            <span className="font-display font-semibold text-lg tracking-tight">
+            <span className="font-display font-semibold text-base sm:text-lg tracking-tight">
               Flat<span className="fm-gradient-text">Match</span>
             </span>
           </div>
@@ -43,12 +43,13 @@ export default function Landing() {
           </nav>
 
           {/* Auth actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <Link to="/login" className="fm-land-login">
               Log in
             </Link>
-            <Link to="/register" className="btn-primary btn-sm">
-              Get started <ArrowRight size={14} />
+            <Link to="/register" className="btn-primary btn-sm !px-3 sm:!px-6">
+              <span className="hidden sm:inline">Get started</span>
+              <span className="sm:hidden">Start</span> <ArrowRight size={14} />
             </Link>
           </div>
         </div>
